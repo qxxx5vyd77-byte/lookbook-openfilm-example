@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../look.css">
+<style>
+  #panel { position: absolute; left: 0; top: 0; width: 1152px; height: 1080px; background: var(--shadow); }
+  #shot { position: absolute; left: 1152px; top: 0; width: 768px; height: 1080px; overflow: hidden; }
+  #shot img { position: absolute; left: -572px; top: 0; width: 1890px; height: 1080px; transform-origin: 956px 590px; }
+  #label-mask { left: 168px; top: 176px; width: 900px; height: 56px; }
+  #label-mask > span { font-size: 40px; line-height: 56px; color: var(--mid); }
+  .frag { left: 168px; width: 940px; height: 112px; }
+  .frag > span { display: inline-block; font-size: 84px; line-height: 112px; color: var(--highlight); }
+  #mark { position: absolute; left: 168px; height: 8px; background: var(--accent); transform-origin: 0 50%; }
+</style>
+</head>
+<body>
+<div id="scene">
+  <div id="panel"></div>
+  <div id="shot"><img src="../assets/looks/plinth-still-life-full.jpg" alt=""></div>
+  <div class="mask" id="label-mask"><span>The exact wording, ready to paste</span></div>
+  <div class="mask frag" style="top: 270px"><span class="title">a chalk-white plinth</span></div>
+  <div class="mask frag" style="top: 390px"><span class="title">hard direct flash</span></div>
+  <div class="mask frag" style="top: 510px"><span class="title">one crisp dark shadow</span></div>
+  <div class="mask frag" style="top: 630px"><span class="title">fine film grain</span></div>
+  <div id="mark"></div>
+</div>
+<script type="module">
+import { prepare, slide, span, smooth, snap } from './kit.js';
+const $ = (s) => document.querySelector(s);
+const D = 2.967, AT = 9.800;   // the last look's card in its own words: each phrase is verbatim from its prompt
+const frags = [...document.querySelectorAll('.frag > span')], tops = [270, 390, 510, 630];
+let B, widths = [];
+window.film = {
+  duration: D,
+  ready: prepare(AT).then((b) => { B = b; widths = frags.map((f) => f.offsetWidth); }),
+  frame(t) {
+    $('#shot img').style.transform = `scale(${(1 + 0.06 * smooth(t / D)).toFixed(5)})`;   // a slow push on the still
+    slide($('#label-mask > span'), t, B(0));
+    frags.forEach((f, i) => slide(f, t, B(0.5 + i)));
+    /* one pink mark, under the newest phrase, jumping a line on each beat */
+    const i = Math.max(0, Math.min(3, Math.floor((t - B(0.5)) / (B(1.5) - B(0.5)))));
+    const r = snap(span(t, B(0.5 + i) + 0.08, B(0.5 + i) + 0.26));
+    $('#mark').style.top = `${tops[i] + 98}px`;
+    $('#mark').style.width = `${widths[i]}px`;
+    $('#mark').style.transform = `scaleX(${r.toFixed(4)})`;
+  },
+};
+</script>
+</body>
+</html>

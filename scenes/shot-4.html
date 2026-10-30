@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../look.css">
+<style>
+  #scene { transform-origin: 960px 600px; }
+  #scene img { display: block; width: 1920px; height: 1080px; object-fit: cover; }
+  #name { position: absolute; left: 168px; top: 150px; padding: 14px 28px 18px; background: var(--highlight); font-size: 88px; line-height: 100px; color: var(--shadow); white-space: nowrap; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position: absolute"><filter id="whip" x="-5%" y="0" width="110%" height="100%" color-interpolation-filters="sRGB"><feGaussianBlur id="whip-blur" stdDeviation="0 0"/></filter></svg>
+<div id="scene"><img src="../assets/looks/plinth-still-life-full.jpg" alt=""></div>
+<div id="name" class="title">Plinth Still Life, Red Accent</div>
+<script type="module">
+import { lookShot } from './look-shot.js';
+lookShot({ D: 1.967, AT: 7.833, move: 'pull', nameAt: 0.5 });
+</script>
+</body>
+</html>

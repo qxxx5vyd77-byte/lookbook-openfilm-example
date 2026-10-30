@@ -1,0 +1,24 @@
+/* look.css: link it from every page of the film. From the hand: Swiss Motion Graphics, Coffee and Fluoro Pink, Swiss Neo-Grotesque. */
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;800&display=swap');
+:root {
+  --shadow: #2A1A14;
+  --dark: #4A2418;
+  --mid: #C7976A;
+  --accent: #FF6FAE;
+  --highlight: #F4ECDF;
+  --title-font: 'Inter Tight', sans-serif;
+  --title-weight: 800;
+  --title-case: none;
+  --title-tracking: -0.03em;
+}
+.title { font-family: var(--title-font); font-weight: var(--title-weight); text-transform: var(--title-case); letter-spacing: var(--title-tracking); }
+
+/* Shared by this film's pages: the paper, the text face, the masthead and the masks that type slides out of. */
+html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: var(--highlight); }
+body { font-family: var(--title-font); font-weight: 500; color: var(--shadow); -webkit-font-smoothing: antialiased; }
+#scene { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; background: var(--highlight); }
+#masthead { position: absolute; left: 168px; top: 72px; font-size: 24px; line-height: 32px; color: var(--dark); }
+#rule { position: absolute; left: 168px; top: 116px; width: 1584px; height: 2px; background: var(--mid); }
+/* a mask clips type sliding through it; the padding leaves room for ink past the line box (caps, the strike) */
+.mask { position: absolute; overflow: hidden; padding: 12px 24px; margin: -12px 0 0 -24px; }
+.mask > span { display: block; white-space: nowrap; }

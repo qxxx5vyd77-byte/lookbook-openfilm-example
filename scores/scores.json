@@ -1,0 +1,7 @@
+{
+ "deep-house": {"card": "Deep House", "bpm": 122.175, "period": 0.491097, "in": 1.0, "note": "the hand's own score card"},
+ "spy-lounge": {"card": "60s Spy Lounge", "bpm": 120.121, "period": 0.499497, "in": 1.0},
+ "synthwave": {"card": "Synthwave", "bpm": 101.787, "period": 0.589467, "in": 1.0},
+ "amapiano": {"card": "Amapiano", "bpm": 112.904, "period": 0.531424, "in": 1.0},
+ "city-pop": {"card": "City Pop", "bpm": 116.012, "period": 0.51719, "in": 1.0}
+}

@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../look.css">
+<style>
+  .cap { left: 168px; top: 160px; width: 1584px; height: 92px; }
+  .cap span { font-size: 72px; line-height: 92px; color: var(--dark); }
+  #word-mask { left: 168px; top: 300px; width: 1640px; height: 330px; }
+  #word-mask > #word { display: inline-block; position: relative; font-size: 280px; line-height: 330px; color: var(--shadow); }
+  #strike { position: absolute; left: -12px; right: -12px; top: calc(50% - 14px); height: 28px; background: var(--accent); transform-origin: 0 50%; }
+  .tile { position: absolute; width: 372px; height: 256px; transform-origin: 186px 105px; }
+  .tile .frame { position: absolute; left: -14px; top: -14px; width: 400px; height: 238px; box-sizing: border-box; border: 10px solid var(--accent); opacity: 0; }
+  .tile .pic { position: absolute; left: 0; top: 0; width: 372px; height: 210px; overflow: hidden; }
+  .tile img { display: block; width: 372px; height: 210px; object-fit: cover; }
+  .tile .name { left: 0; top: 222px; width: 372px; height: 34px; }
+  .tile .name span { font-size: 27px; line-height: 34px; color: var(--shadow); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position: absolute"><filter id="whip" x="-5%" y="0" width="110%" height="100%" color-interpolation-filters="sRGB"><feGaussianBlur id="whip-blur" stdDeviation="0 0"/></filter></svg>
+<div id="scene">
+  <div id="masthead">Director's Lookbook</div>
+  <div id="rule"></div>
+  <div class="cap mask" id="cap1"><span>Your prompt says</span></div>
+  <div class="cap mask" id="cap2"><span>Name the look.</span></div>
+  <div class="mask" id="word-mask"><span id="word" class="title">cinematic.<i id="strike"></i></span></div>
+  <div class="tile" style="left: 168px; top: 330px"><div class="pic"><img src="../assets/looks/camera-goldenhour.jpg" alt=""></div><div class="name mask"><span>Golden Hour</span></div></div>
+  <div class="tile" style="left: 572px; top: 330px"><div class="frame"></div><div class="pic"><img src="../assets/looks/botanical-nest-full.jpg" alt=""></div><div class="name mask"><span>Botanical Nest Illustration</span></div></div>
+  <div class="tile" style="left: 976px; top: 330px"><div class="pic"><img src="../assets/looks/film-plinth-still-life-red-accent.jpg" alt=""></div><div class="name mask"><span>Plinth Still Life, Red Accent</span></div></div>
+  <div class="tile" style="left: 1380px; top: 330px"><div class="pic"><img src="../assets/looks/score-bossa-nova.jpg" alt=""></div><div class="name mask"><span>Bossa Nova</span></div></div>
+  <div class="tile" style="left: 168px; top: 620px"><div class="pic"><img src="../assets/looks/film-decaying-halftone-photo.jpg" alt=""></div><div class="name mask"><span>Decaying Halftone Photo</span></div></div>
+  <div class="tile" style="left: 572px; top: 620px"><div class="pic"><img src="../assets/looks/camera-lowangle.jpg" alt=""></div><div class="name mask"><span>Worm's-Eye Low Angle</span></div></div>
+  <div class="tile" style="left: 976px; top: 620px"><div class="pic"><img src="../assets/looks/score-deep-house.jpg" alt=""></div><div class="name mask"><span>Deep House</span></div></div>
+  <div class="tile" style="left: 1380px; top: 620px"><div class="pic"><img src="../assets/looks/color-blue-hour.jpg" alt=""></div><div class="name mask"><span>Blue Hour Cool</span></div></div>
+</div>
+<script type="module">
+import { prepare, slide, span, smooth, snap } from './kit.js';
+const $ = (s) => document.querySelector(s);
+const D = 3.900, PICK = 1;   // the shot's length (it cuts on beat 8, a bar line); the tile that opens in shot 2
+const tiles = [...document.querySelectorAll('.tile')].map((el) => ({ el, pic: el.querySelector('.pic'), name: el.querySelector('.name span') }));
+let B;
+window.film = {
+  duration: D,
+  ready: prepare(0).then((b) => { B = b; }),
+  frame(t) {
+    slide($('#cap1 span'), t, -0.22, B(3));   // already in on the first frame
+    slide($('#cap2 span'), t, B(3));
+    slide($('#word'), t, B(1), B(3));
+    $('#strike').style.transform = `scaleX(${smooth(span(t, B(2), B(2.5)))})`;
+    /* the grid: a look every eighth of a beat; the pick steps forward in its pink frame, then the camera's eye zooms
+       it to the middle of the frame while the rest fall away */
+    const back = smooth(span(t, B(5), B(5) + 0.3)), z = smooth(span(t, B(6), B(7.25)));
+    tiles.forEach((tile, k) => {
+      const tin = B(3.25 + k * 0.125), r = snap(span(t, tin, tin + 0.24));
+      tile.pic.style.clipPath = `inset(${((1 - r) * 100).toFixed(3)}% 0 0 0)`;
+      slide(tile.name, t, tin + 0.08);
+      if (k === PICK) {
+        const s = (1 + 0.15 * back) * (1 + z), [cx, cy] = [572 + 186, 330 + 105];   // 1.15x, then 2.3x, centred
+        tile.el.style.transform = `translate(${((960 - cx) * z).toFixed(2)}px, ${((540 - cy) * z).toFixed(2)}px) scale(${s.toFixed(4)})`;
+        tile.el.style.zIndex = 2;
+        tile.el.querySelector('.frame').style.opacity = snap(span(t, B(5), B(5) + 0.2));
+      } else {
+        tile.el.style.opacity = Math.max(0, 1 - 0.8 * back - 0.15 * z);
+        tile.el.style.transform = `scale(${(1 - 0.08 * back).toFixed(4)})`;
+      }
+    });
+    /* Whip Pan: hold, then in the last 0.25 s the scene crosses a full stage width, blur peaking mid-move */
+    const w = span(t, D - 0.25, D), blur = 24 * Math.sin(Math.PI * w);
+    $('#whip-blur').setAttribute('stdDeviation', `${blur.toFixed(2)} 0`);
+    $('#scene').style.filter = blur > 0.01 ? 'url(#whip)' : 'none';
+    $('#scene').style.transform = `translateX(${(-1920 * smooth(w)).toFixed(2)}px)`;
+  },
+};
+</script>
+</body>
+</html>
